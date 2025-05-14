@@ -13,3 +13,4 @@ exports.addProductToCart = (request, response) => {
 exports.getProductsCount = () => {
   return Cart.getProductsQuantity();
 };
+

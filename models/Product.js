@@ -1,3 +1,7 @@
+const { getDatabase } = require('../database');
+
+const COLLECTION_NAME = 'products';
+
 class Product {
   constructor(name, description, price) {
     this.name = name;
@@ -5,30 +9,42 @@ class Product {
     this.price = price;
   }
 
-  static #products = [];
+  async save() {
+    const db = getDatabase();
 
-  static getAll() {
-    return this.#products;
-  }
-
-  static add(product) {
-    this.#products.push(product);
-  }
-
-  static findByName(name) {
-    return this.#products.find((product) => product.name === name);
-  }
-
-  static deleteByName(name) {
-    this.#products = this.#products.filter((product) => product.name !== name);
-  }
-
-  static getLast() {
-    if (!this.#products.length) {
-      return;
+    const existing = await db.collection(COLLECTION_NAME).findOne({ name: this.name });
+    if (existing) {
+      throw new Error(`Product '${this.name}' already exists.`);
     }
 
-    return this.#products[this.#products.length - 1];
+    await db.collection(COLLECTION_NAME).insertOne(this);
+  }
+
+  static async getAll() {
+    const db = getDatabase();
+    const products = await db.collection(COLLECTION_NAME).find().toArray();
+    console.log('[DEBUG] Products from database:', products);
+    return products;
+  }
+
+  static async findByName(name) {
+    const db = getDatabase();
+    return db.collection(COLLECTION_NAME).findOne({ name });
+  }
+
+  static async deleteByName(name) {
+    const db = getDatabase();
+    await db.collection(COLLECTION_NAME).deleteOne({ name });
+  }
+
+  static async getLast() {
+    const db = getDatabase();
+    return db.collection(COLLECTION_NAME)
+        .find()
+        .sort({ _id: -1 })
+        .limit(1)
+        .toArray()
+        .then(res => res[0]);
   }
 }
 

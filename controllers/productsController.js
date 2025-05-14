@@ -5,9 +5,9 @@ const { STATUS_CODE } = require("../constants/statusCode");
 
 const cartController = require("./cartController");
 
-exports.getProductsView = (request, response) => {
+exports.getProductsView = async (request, response) => {
   const cartCount = cartController.getProductsCount();
-  const products = Product.getAll();
+  const products = await Product.getAll();
 
   response.render("products.ejs", {
     headTitle: "Shop - Products",
@@ -31,9 +31,24 @@ exports.getAddProductView = (request, response) => {
   });
 };
 
-exports.getNewProductView = (request, response) => {
+exports.addProduct = async (request, response) => {
+  try {
+    const { name, description, price } = request.body;
+    const product = new Product(name, description, Number(price));
+    await product.save();
+    response.redirect("/products/new");
+  } catch (error) {
+    console.error('Error adding product:', error);
+    response.status(STATUS_CODE.BAD_REQUEST).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
+};
+
+exports.getNewProductView = async (request, response) => {
   const cartCount = cartController.getProductsCount();
-  const newestProduct = Product.getLast();
+  const newestProduct = await Product.getLast();
 
   response.render("new-product.ejs", {
     headTitle: "Shop - New product",
@@ -45,11 +60,11 @@ exports.getNewProductView = (request, response) => {
   });
 };
 
-exports.getProductView = (request, response) => {
+exports.getProductView = async (request, response) => {
   const cartCount = cartController.getProductsCount();
   const name = request.params.name;
 
-  const product = Product.findByName(name);
+  const product = await Product.findByName(name);
 
   response.render("product.ejs", {
     headTitle: "Shop - Product",
@@ -61,9 +76,9 @@ exports.getProductView = (request, response) => {
   });
 };
 
-exports.deleteProduct = (request, response) => {
+exports.deleteProduct = async (request, response) => {
   const name = request.params.name;
-  Product.deleteByName(name);
+  await Product.deleteByName(name);
 
   response.status(STATUS_CODE.OK).json({ success: true });
 };

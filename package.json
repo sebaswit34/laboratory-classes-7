@@ -1,7 +1,7 @@
 {
   "name": "laboratory-classes-7",
   "version": "1.0.0",
-  "description": "",
+  "description": "W trakcie pracy nad zadaniami (ćwiczeniami), będziecie spotykać się z różnymi pomocnikami, którzy będą wskazywać, co należy zrobić w danym fragmencie kodu. Im dalsze ćwiczenie, tym rzadziej będą się pojawiać. Oto krótka charakterystyka każdego z nich:",
   "main": "main.js",
   "scripts": {
     "start": "nodemon server.js",
@@ -13,11 +13,21 @@
     "body-parser": "^2.2.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
-    "laboratory-classes-7": "file:"
+    "laboratory-classes-7": "file:",
+    "mongoose": "^8.14.3",
+    "node": "^24.0.1"
   },
   "devDependencies": {
-    "electron": "^36.1.0",
+    "electron": "^36.2.0",
     "nodemon": "^3.1.9"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sebaswit34/laboratory-classes-7.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/sebaswit34/laboratory-classes-7/issues"
+  },
+  "homepage": "https://github.com/sebaswit34/laboratory-classes-7#readme"
 }
-

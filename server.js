@@ -8,6 +8,7 @@ const productsRoutes = require("./routing/products");
 const logoutRoutes = require("./routing/logout");
 const killRoutes = require("./routing/kill");
 const homeRoutes = require("./routing/home");
+const { mongoConnect } = require("./database");
 const { STATUS_CODE } = require("./constants/statusCode");
 const { MENU_LINKS } = require("./constants/navigation");
 const cartController = require("./controllers/cartController");
@@ -19,6 +20,12 @@ app.set("views", "views");
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.use('/', homeRoutes);
+app.use('/products', productsRoutes);
+app.use('/logout', logoutRoutes);
+app.use('/kill', killRoutes);
 
 app.use((request, _response, next) => {
   const { url, method } = request;
@@ -27,10 +34,6 @@ app.use((request, _response, next) => {
   next();
 });
 
-app.use("/products", productsRoutes);
-app.use("/logout", logoutRoutes);
-app.use("/kill", killRoutes);
-app.use(homeRoutes);
 app.use((request, response) => {
   const { url } = request;
   const cartCount = cartController.getProductsCount();
@@ -44,4 +47,10 @@ app.use((request, response) => {
   logger.getErrorLog(url);
 });
 
-app.listen(PORT);
+console.log(">> Attempting to connect to database...");
+mongoConnect(() => {
+  console.log(">> Connected! Starting server...");
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+});
